@@ -16,3 +16,6 @@ todos.json
 
 # typescript
 *.tsbuildinfo
+
+# supabase
+supabase/.temp/
