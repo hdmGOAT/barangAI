@@ -7,11 +7,19 @@
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "turbo format",
-    "typecheck": "turbo typecheck"
+    "typecheck": "turbo typecheck",
+    "sb": "supabase",
+    "sb:link": "export $(grep -v '^#' supabase/functions/.env | grep SUPABASE_ACCESS_TOKEN | xargs) && supabase link --project-ref tryitafcqlmzduwugqwz || true",
+    "sb:push": "export $(grep -v '^#' supabase/functions/.env | grep SUPABASE_ACCESS_TOKEN | xargs) && supabase db push || true",
+    "sb:deploy": "export $(grep -v '^#' supabase/functions/.env | grep SUPABASE_ACCESS_TOKEN | xargs) && supabase functions deploy ingest --no-verify-jwt || true",
+    "sb:secrets": "export $(grep -v '^#' supabase/functions/.env | grep SUPABASE_ACCESS_TOKEN | xargs) && supabase secrets set --env-file supabase/functions/.env || true",
+    "sb:logs": "export $(grep -v '^#' supabase/functions/.env | grep SUPABASE_ACCESS_TOKEN | xargs) && supabase functions logs ingest || true",
+    "sb:serve": "supabase functions serve ingest --env-file supabase/functions/.env"
   },
   "devDependencies": {
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
+    "supabase": "^2.107.0",
     "turbo": "^2.9.15",
     "typescript": "^6"
   },
