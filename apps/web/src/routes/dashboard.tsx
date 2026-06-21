@@ -1,108 +1,163 @@
 import { AreaChart } from "@tremor/react"
 import { createFileRoute } from "@tanstack/react-router"
 import { Activity, AlertTriangle, Clock, Radio } from "lucide-react"
+import type { LucideIcon } from "lucide-react"
 
-import { categories, logs, recentIncidents, responseTrend, stats } from "@/lib/mock-data"
+import {
+  categories,
+  logs,
+  recentIncidents,
+  responseTrend,
+  stats,
+} from "@/lib/mock-data"
+import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard })
 
-const icons = [Clock, AlertTriangle, Activity, Radio]
+const icons: LucideIcon[] = [Clock, AlertTriangle, Activity, Radio]
+
+const urgencyClass: Record<string, string> = {
+  critical: "bg-urgency-critical/10 text-urgency-critical",
+  high: "bg-urgency-high/10 text-urgency-high",
+  medium: "bg-urgency-medium/10 text-urgency-medium",
+  low: "bg-urgency-low/10 text-urgency-low",
+}
 
 function Dashboard() {
   return (
-    <main className="min-h-full bg-[#f5f7f8] p-4 text-[#073f31] lg:p-8">
+    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
       <div className="mx-auto grid max-w-7xl gap-5">
+
+        {/* ── Stat cards ──────────────────────────────────────────── */}
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat, index) => {
             const Icon = icons[index] ?? Activity
-
             return (
-              <article key={stat.label} className="rounded-xl border border-black/10 bg-white p-5 shadow-sm">
+              <article
+                key={stat.label}
+                className="rounded-xl border border-border bg-card p-5 shadow-sm transition-transform hover:-translate-y-0.5"
+              >
                 <div className="flex items-start justify-between">
-                  <p className="text-xs font-medium uppercase tracking-[0.12em] text-slate-500">{stat.label}</p>
+                  <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                    {stat.label}
+                  </p>
                   <Icon className="size-4 text-primary" />
                 </div>
                 <div className="mt-3 flex items-end gap-1">
-                  <span className="text-4xl font-black tracking-[-0.06em]">{stat.value}</span>
-                  {stat.unit && <span className="mb-1 text-sm font-semibold">{stat.unit}</span>}
-                  <span className={stat.good ? "mb-2 ml-2 text-xs font-bold text-primary" : "mb-2 ml-2 text-xs font-bold text-red-600"}>
+                  <span className="text-4xl font-black tracking-[-0.06em]">
+                    {stat.value}
+                  </span>
+                  {stat.unit && (
+                    <span className="mb-1 text-sm font-semibold text-muted-foreground">
+                      {stat.unit}
+                    </span>
+                  )}
+                  <span
+                    className={cn(
+                      "mb-2 ml-2 text-xs font-bold",
+                      stat.good ? "text-primary" : "text-urgency-critical",
+                    )}
+                  >
                     {stat.trend}
                   </span>
                 </div>
-                <div className="mt-4 h-2 rounded-full bg-slate-100">
-                  <div className="h-full w-3/4 rounded-full bg-[#b8ec67]" />
+                <div className="mt-4 h-2 rounded-full bg-muted">
+                  <div className="h-full w-3/4 rounded-full bg-lihok-accent" />
                 </div>
               </article>
             )
           })}
         </section>
 
+        {/* ── SLA chart + Categories ──────────────────────────────── */}
         <section className="grid gap-5 xl:grid-cols-[2fr_0.8fr]">
-          <article className="rounded-xl border border-black/10 bg-white p-6 shadow-sm">
+          <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <div className="mb-4 flex items-start justify-between">
               <div>
                 <h1 className="text-lg font-bold">Response Time SLA Trends</h1>
-                <p className="text-xs text-slate-500">Real-time versus historical target of 5 minutes</p>
+                <p className="text-xs text-muted-foreground">
+                  Real-time versus historical target of 5 minutes
+                </p>
               </div>
-              <span className="text-xl leading-none">⋮</span>
+              <span className="text-xl leading-none text-muted-foreground">⋮</span>
             </div>
             <AreaChart
               data={responseTrend}
               index="time"
               categories={["minutes", "target"]}
-              colors={["lime", "red"]}
+              colors={["emerald", "red"]}
               showLegend={false}
               showYAxis={false}
               className="h-72"
             />
           </article>
 
-          <article className="rounded-xl border border-black/10 bg-white p-6 shadow-sm">
+          <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <h2 className="text-base font-bold">Incident Category</h2>
             <div className="mt-5 grid gap-4">
               {categories.map((category) => (
                 <div key={category.name}>
                   <div className="mb-1 flex justify-between text-xs font-semibold">
                     <span>{category.name}</span>
-                    <span>{category.percentage}%</span>
+                    <span className="text-muted-foreground">{category.percentage}%</span>
                   </div>
-                  <div className="h-2 rounded-full bg-slate-100">
-                    <div className="h-full rounded-full bg-[#b8ec67]" style={{ width: `${category.percentage}%` }} />
+                  <div className="h-2 rounded-full bg-muted">
+                    <div
+                      className="h-full rounded-full bg-primary"
+                      style={{ width: `${category.percentage}%` }}
+                    />
                   </div>
                 </div>
               ))}
             </div>
-            <button className="mt-7 w-full rounded-lg bg-[#d9f7bd] py-3 text-xs font-bold text-[#073f31]">View Full Inventory</button>
+            <button className="mt-7 w-full rounded-lg bg-lihok-accent/30 py-3 text-xs font-bold text-lihok-ink transition-colors hover:bg-lihok-accent/50">
+              View Full Inventory
+            </button>
           </article>
         </section>
 
+        {/* ── Recent Incidents + System Logs ──────────────────────── */}
         <section className="grid gap-5 xl:grid-cols-[2fr_0.8fr]">
-          <article className="rounded-xl border border-black/10 bg-white p-6 shadow-sm">
+          <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <h2 className="text-base font-bold">Recent Incident List</h2>
-            <div className="mt-4 divide-y divide-slate-100">
+            <div className="mt-4 divide-y divide-border">
               {recentIncidents.map((incident) => (
-                <a key={incident.id} href="/command-center/demo" className="grid gap-1 py-3 text-sm hover:text-primary">
+                <a
+                  key={incident.id}
+                  href="/command-center/demo"
+                  className="grid gap-1 py-3 text-sm transition-colors hover:text-primary"
+                >
                   <div className="flex items-center justify-between gap-3">
-                    <span className={incident.urgency === "critical" ? "rounded-full bg-red-50 px-2 py-1 text-[10px] font-black uppercase text-red-600" : "rounded-full bg-yellow-50 px-2 py-1 text-[10px] font-black uppercase text-yellow-700"}>
+                    <span
+                      className={cn(
+                        "rounded-full px-2 py-1 text-[10px] font-black uppercase",
+                        urgencyClass[incident.urgency] ?? urgencyClass.low,
+                      )}
+                    >
                       {incident.urgency}
                     </span>
-                    <span className="text-xs text-slate-500">{incident.timeAgo}</span>
+                    <span className="text-xs text-muted-foreground">
+                      {incident.timeAgo}
+                    </span>
                   </div>
                   <p className="font-bold">{incident.title}</p>
-                  <p className="text-xs text-slate-500">{incident.location}</p>
+                  <p className="text-xs text-muted-foreground">{incident.location}</p>
                 </a>
               ))}
             </div>
           </article>
 
-          <article className="rounded-xl border border-black/10 bg-white p-6 shadow-sm">
+          <article className="rounded-xl border border-border bg-card p-6 shadow-sm">
             <h2 className="text-base font-bold">System Logs</h2>
             <div className="mt-4 grid gap-4">
               {logs.map((log) => (
-                <div key={log.message} className="grid grid-cols-[8px_1fr_auto] items-start gap-3 text-xs">
+                <div
+                  key={log.message}
+                  className="grid grid-cols-[8px_1fr_auto] items-start gap-3 text-xs"
+                >
                   <span className="mt-1.5 size-2 rounded-full bg-primary" />
-                  <p className="text-slate-700">{log.message}</p>
-                  <span className="text-slate-400">{log.timeAgo}</span>
+                  <p className="text-foreground/80">{log.message}</p>
+                  <span className="text-muted-foreground">{log.timeAgo}</span>
                 </div>
               ))}
             </div>

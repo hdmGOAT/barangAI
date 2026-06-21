@@ -51,6 +51,13 @@
     --color-heatmap-moderate: var(--heatmap-moderate);
     --color-heatmap-high: var(--heatmap-high);
     --color-heatmap-critical: var(--heatmap-critical);
+    --color-lihok-ink: var(--lihok-ink);
+    --color-lihok-mist: var(--lihok-mist);
+    --color-lihok-accent: var(--lihok-accent);
+    --color-lihok-surface: var(--lihok-surface);
+    --color-lihok-dark: var(--lihok-dark);
+    --color-live-alert: var(--live-alert);
+    --color-live-alert-bg: var(--live-alert-bg);
     --radius-sm: calc(var(--radius) * 0.6);
     --radius-md: calc(var(--radius) * 0.8);
     --radius-lg: var(--radius);
@@ -106,6 +113,12 @@
     --heatmap-critical: oklch(0.33 0.1 160);
     --lihok-ink: oklch(0.24 0.08 164);
     --lihok-mist: oklch(0.97 0.01 180);
+    /* yellow-green highlight used for active nav, badges, CTAs */
+    --lihok-accent: oklch(0.89 0.16 127);
+    /* page background — very light grey-green */
+    --lihok-surface: oklch(0.97 0.008 150);
+    /* darkest green used for dispatch buttons */
+    --lihok-dark: oklch(0.26 0.09 164);
     --live-alert: oklch(0.6 0.22 25);
     --live-alert-bg: oklch(0.97 0.03 25);
 }

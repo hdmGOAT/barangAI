@@ -1,4 +1,4 @@
-import { useRouterState } from "@tanstack/react-router"
+import { Link, useRouterState } from "@tanstack/react-router"
 import {
   AlertTriangle,
   Bell,
@@ -25,86 +25,126 @@ const navItems = [
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = useRouterState({ select: (state) => state.location.pathname })
-  const latestLog = logs[0]
+  const latestLog = logs[0] ?? { message: "System nominal", timeAgo: "" }
 
   return (
-    <div className="grid min-h-svh grid-cols-1 bg-[#f5f7f8] text-[#063f31] lg:grid-cols-[244px_1fr]">
-      <aside className="hidden border-r border-black/10 bg-white lg:flex lg:flex-col">
+    <div className="grid min-h-svh grid-cols-1 bg-lihok-surface text-lihok-ink lg:grid-cols-[244px_1fr]">
+      {/* ── Sidebar ────────────────────────────────────────────────── */}
+      <aside className="hidden border-r border-border bg-card lg:flex lg:flex-col">
+        {/* Logo */}
         <div className="flex h-20 items-center gap-3 px-6">
           <span className="grid size-9 place-items-center rounded-full bg-primary/10 text-primary">
             <Radio className="size-5" />
           </span>
           <div>
             <p className="text-xl font-black tracking-[-0.04em]">LihokBarangAI</p>
-            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-slate-500">Admin Console</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+              Admin Console
+            </p>
           </div>
         </div>
-        <nav className="flex flex-1 flex-col gap-2 px-4">
+
+        {/* Nav */}
+        <nav className="flex flex-1 flex-col gap-1 px-4">
           {navItems.map((item) => {
             const Icon = item.icon
             const section = `/${item.href.split("/")[1]}`
-            const active = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(section))
+            const active =
+              pathname === item.href ||
+              (item.href !== "/dashboard" && pathname.startsWith(section))
 
             return (
-              <a
+              <Link
                 key={item.href}
-                href={item.href}
+                to={item.href}
                 className={cn(
-                  "flex items-center gap-3 rounded-md px-4 py-3 text-sm text-slate-600 transition hover:bg-primary/10 hover:text-[#063f31]",
-                  active && "border-l-4 border-primary bg-[#c9f28a] font-semibold text-[#063f31]",
+                  "flex items-center gap-3 rounded-md px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-primary/10 hover:text-lihok-ink",
+                  active &&
+                    "border-l-4 border-primary bg-lihok-accent/40 font-semibold text-lihok-ink",
                 )}
               >
                 <Icon className="size-4" />
                 {item.label}
-              </a>
+              </Link>
             )
           })}
         </nav>
-        <div className="border-t border-black/10 p-5">
+
+        {/* User profile */}
+        <div className="border-t border-border p-5">
           <div className="flex items-center gap-3">
-            <span className="grid size-10 place-items-center rounded-full bg-[#b7ef50] text-sm font-bold">JD</span>
+            <span className="grid size-10 place-items-center rounded-full bg-lihok-accent text-sm font-bold text-lihok-ink">
+              JD
+            </span>
             <div>
               <p className="text-sm font-semibold">Juan Dela Cruz</p>
-              <p className="text-[10px] uppercase tracking-wide text-slate-500">Brgy. Captain</p>
+              <p className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                Brgy. Captain
+              </p>
             </div>
           </div>
-          <button className="mt-5 flex items-center gap-3 text-sm text-slate-700">
+          <button className="mt-5 flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground">
             <LogOut className="size-4" /> Sign Out
           </button>
         </div>
       </aside>
 
+      {/* ── Main column ────────────────────────────────────────────── */}
       <div className="grid min-h-svh grid-rows-[auto_1fr_64px] overflow-hidden">
-        <header className="border-b border-black/10 bg-white px-4 py-3 lg:px-8">
+        {/* Top bar */}
+        <header className="border-b border-border bg-card px-4 py-3 lg:px-8">
           <div className="flex items-center justify-between gap-4">
-            <div className="flex w-full max-w-md items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
-              <Search className="size-4" />
+            <div className="flex w-full max-w-md items-center gap-2 rounded-lg border border-input bg-muted px-3 py-2 text-sm text-muted-foreground">
+              <Search className="size-4 shrink-0" />
               <span className="truncate">Search incidents, reports, or citizens...</span>
             </div>
-            <div className="flex items-center gap-4 text-slate-600">
+            <div className="flex items-center gap-4 text-muted-foreground">
               <Bell className="size-5" />
-              <span className="grid size-7 place-items-center rounded-full border border-slate-300 text-xs">JD</span>
+              <span className="grid size-7 place-items-center rounded-full border border-border text-xs font-semibold">
+                JD
+              </span>
             </div>
           </div>
+
+          {/* Mobile nav strip */}
           <nav className="mt-3 flex gap-2 overflow-x-auto lg:hidden">
-            {navItems.map((item) => (
-              <a key={item.href} href={item.href} className={cn("shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-slate-600", pathname.startsWith(`/${item.href.split("/")[1]}`) && "bg-[#c9f28a] text-[#073f31]")}>{item.label}</a>
-            ))}
+            {navItems.map((item) => {
+              const active = pathname.startsWith(`/${item.href.split("/")[1]}`)
+              return (
+                <Link
+                  key={item.href}
+                  to={item.href}
+                  className={cn(
+                    "shrink-0 rounded-full px-3 py-2 text-xs font-semibold text-muted-foreground transition-colors",
+                    active && "bg-lihok-accent/40 text-lihok-ink",
+                  )}
+                >
+                  {item.label}
+                </Link>
+              )
+            })}
           </nav>
         </header>
 
+        {/* Page content */}
         <div className="overflow-auto">{children}</div>
 
-        <footer className="flex items-center gap-4 border-t border-black/10 bg-white px-4 text-sm lg:px-8" aria-live="polite">
-          <span className="grid size-10 place-items-center rounded-full bg-[var(--live-alert-bg)] text-[var(--live-alert)]">
+        {/* Live alert bar */}
+        <footer
+          className="flex items-center gap-4 border-t border-border bg-card px-4 text-sm lg:px-8"
+          aria-live="polite"
+        >
+          <span className="grid size-10 shrink-0 place-items-center rounded-full bg-live-alert-bg text-live-alert">
             <Radio className="size-4 animate-[live-pulse_2s_ease-in-out_infinite]" />
           </span>
-          <div className="min-w-28">
-            <p className="text-[10px] font-bold uppercase tracking-wide text-[var(--live-alert)]">Live Alerts</p>
-            <p className="font-semibold text-[#063f31]">Feed Active</p>
+          <div className="min-w-28 shrink-0">
+            <p className="text-[10px] font-bold uppercase tracking-wide text-live-alert">
+              Live Alerts
+            </p>
+            <p className="font-semibold text-lihok-ink">Feed Active</p>
           </div>
-          <p className="truncate text-slate-600">{latestLog.message}</p>
-          <span className="ml-auto hidden text-slate-500 sm:block">13:58</span>
+          <p className="truncate text-muted-foreground">{latestLog.message}</p>
+          <span className="ml-auto hidden shrink-0 text-muted-foreground sm:block">13:58</span>
         </footer>
       </div>
     </div>
