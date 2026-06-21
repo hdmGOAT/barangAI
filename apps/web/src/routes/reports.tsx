@@ -3,6 +3,7 @@ import { AreaChart } from "@tremor/react"
 import { createFileRoute } from "@tanstack/react-router"
 
 import { categories, heatZones, responseTrend, stats } from "@/lib/mock-data"
+import { StatCard } from "@/components/stat-card"
 import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/reports")({ component: Reports })
@@ -50,18 +51,15 @@ function Reports() {
         {/* ── Stat cards ───────────────────────────────────────────── */}
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {stats.map((stat) => (
-            <article
+            <StatCard
               key={stat.label}
-              className="rounded-xl border border-border bg-card p-5 shadow-sm"
-            >
-              <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                {stat.label}
-              </p>
-              <p className="mt-3 text-4xl font-black tracking-[-0.06em]">
-                {stat.value}
-                <span className="text-sm text-muted-foreground">{stat.unit}</span>
-              </p>
-            </article>
+              label={stat.label}
+              value={stat.value}
+              unit={stat.unit}
+              trend={stat.trend}
+              good={stat.good}
+              progress={stat.good ? 85 : 40}
+            />
           ))}
         </section>
 

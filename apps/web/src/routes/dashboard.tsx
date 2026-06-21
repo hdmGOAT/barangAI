@@ -10,6 +10,7 @@ import {
   responseTrend,
   stats,
 } from "@/lib/mock-data"
+import { StatCard } from "@/components/stat-card"
 import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard })
@@ -30,43 +31,18 @@ function Dashboard() {
 
         {/* ── Stat cards ──────────────────────────────────────────── */}
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {stats.map((stat, index) => {
-            const Icon = icons[index] ?? Activity
-            return (
-              <article
-                key={stat.label}
-                className="rounded-xl border border-border bg-card p-5 shadow-sm transition-transform hover:-translate-y-0.5"
-              >
-                <div className="flex items-start justify-between">
-                  <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                    {stat.label}
-                  </p>
-                  <Icon className="size-4 text-primary" />
-                </div>
-                <div className="mt-3 flex items-end gap-1">
-                  <span className="text-4xl font-black tracking-[-0.06em]">
-                    {stat.value}
-                  </span>
-                  {stat.unit && (
-                    <span className="mb-1 text-sm font-semibold text-muted-foreground">
-                      {stat.unit}
-                    </span>
-                  )}
-                  <span
-                    className={cn(
-                      "mb-2 ml-2 text-xs font-bold",
-                      stat.good ? "text-primary" : "text-urgency-critical",
-                    )}
-                  >
-                    {stat.trend}
-                  </span>
-                </div>
-                <div className="mt-4 h-2 rounded-full bg-muted">
-                  <div className="h-full w-3/4 rounded-full bg-lihok-accent" />
-                </div>
-              </article>
-            )
-          })}
+          {stats.map((stat, index) => (
+            <StatCard
+              key={stat.label}
+              label={stat.label}
+              value={stat.value}
+              unit={stat.unit}
+              trend={stat.trend}
+              good={stat.good}
+              icon={icons[index] ?? Activity}
+              progress={stat.good ? 85 : 40}
+            />
+          ))}
         </section>
 
         {/* ── SLA chart + Categories ──────────────────────────────── */}
