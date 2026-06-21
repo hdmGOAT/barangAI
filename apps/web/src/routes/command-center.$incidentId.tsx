@@ -8,6 +8,7 @@ import { SectionCard } from "@/components/section-card"
 import { SmsFeedTable } from "@/components/sms-feed-table"
 import { SystemLogFeed } from "@/components/system-log-feed"
 import { UrgencyBadge } from "@/components/urgency-badge"
+import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/command-center/$incidentId")({
@@ -59,13 +60,13 @@ function CommandCenter() {
 
           {/* Actions */}
           <div className="mt-5 flex justify-end gap-3 border-b border-border pb-5">
-            <button className="flex items-center gap-2 rounded-lg bg-lihok-dark px-5 py-3 text-sm font-bold text-white transition-opacity hover:opacity-90">
+            <Button className="flex h-11 items-center gap-2 bg-lihok-dark px-5 text-sm font-bold text-white transition-opacity hover:bg-lihok-dark/90 hover:opacity-90">
               <Send className="size-4" />
               Dispatch Response Team
-            </button>
-            <button className="grid size-11 place-items-center rounded-lg border border-border bg-card transition-colors hover:bg-muted">
+            </Button>
+            <Button variant="outline" size="icon" className="size-11 border-border transition-colors hover:bg-muted">
               <Share2 className="size-4" />
-            </button>
+            </Button>
           </div>
 
           {/* SMS Feed */}

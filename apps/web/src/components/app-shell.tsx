@@ -13,6 +13,7 @@ import {
 
 import { logs } from "@/lib/mock-data"
 import { TopBarSearch } from "@/components/top-bar-search"
+import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 const navItems = [
@@ -84,9 +85,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               </p>
             </div>
           </div>
-          <button className="mt-5 flex items-center gap-3 text-sm text-muted-foreground transition-colors hover:text-foreground">
+          <Button variant="ghost" className="mt-5 w-full justify-start gap-3 px-0 text-muted-foreground hover:bg-transparent hover:text-foreground">
             <LogOut className="size-4" /> Sign Out
-          </button>
+          </Button>
         </div>
       </aside>
 

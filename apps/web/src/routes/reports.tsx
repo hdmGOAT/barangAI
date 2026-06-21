@@ -8,6 +8,7 @@ import { CategoryBar } from "@/components/category-bar"
 import { SectionCard } from "@/components/section-card"
 import { TimeRangeToggle, type TimeRange } from "@/components/time-range-toggle"
 import { HeatZoneCell } from "@/components/heat-zone-cell"
+import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/reports")({ component: Reports })
@@ -82,9 +83,9 @@ function Reports() {
                 />
               ))}
             </div>
-            <button className="mt-7 w-full rounded-lg bg-muted py-3 text-xs font-bold transition-colors hover:bg-lihok-accent/30">
+            <Button variant="secondary" className="mt-7 w-full py-6 text-xs font-bold hover:bg-lihok-accent/30 hover:text-lihok-ink">
               Download Category Report
-            </button>
+            </Button>
           </SectionCard>
         </div>
 

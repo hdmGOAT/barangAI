@@ -1,6 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@workspace/ui/lib/utils"
 import type { HeatDensity } from "@/lib/mock-data"
+import { Button } from "@workspace/ui/components/button"
 
 const cellVariants = cva(
   "flex min-h-28 flex-col justify-end rounded-lg p-4 text-left shadow-inner transition-opacity hover:opacity-90",
@@ -37,13 +38,14 @@ export function HeatZoneCell({
   className,
 }: HeatZoneCellProps) {
   return (
-    <button
-      className={cn(cellVariants({ density }), wideOnMd && "md:col-span-2", className)}
+    <Button
+      variant="ghost"
+      className={cn("h-auto flex-col items-start justify-end hover:bg-transparent", cellVariants({ density }), wideOnMd && "md:col-span-2", className)}
       onClick={onClick}
       aria-label={`${zone}: ${label}`}
     >
       <span className="text-[10px] font-bold uppercase opacity-80">{zone}</span>
       <span className="text-xs font-black">{label}</span>
-    </button>
+    </Button>
   )
 }

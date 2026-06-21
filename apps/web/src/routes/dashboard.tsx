@@ -15,6 +15,7 @@ import { CategoryBar } from "@/components/category-bar"
 import { SectionCard } from "@/components/section-card"
 import { IncidentRow } from "@/components/incident-row"
 import { SystemLogFeed } from "@/components/system-log-feed"
+import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/dashboard")({ component: Dashboard })
@@ -74,9 +75,9 @@ function Dashboard() {
                 />
               ))}
             </div>
-            <button className="mt-7 w-full rounded-lg bg-lihok-accent/30 py-3 text-xs font-bold text-lihok-ink transition-colors hover:bg-lihok-accent/50">
+            <Button className="mt-7 w-full bg-lihok-accent/30 py-6 text-xs font-bold text-lihok-ink hover:bg-lihok-accent/50 hover:text-lihok-ink">
               View Full Inventory
-            </button>
+            </Button>
           </SectionCard>
         </section>
 

@@ -5,6 +5,7 @@ import { LeafletMap } from "@/components/leaflet-map"
 import { PersonnelCard } from "@/components/personnel-card"
 import { UrgencyBadge } from "@/components/urgency-badge"
 import { personnel } from "@/lib/mock-data"
+import { Button } from "@workspace/ui/components/button"
 import { cn } from "@workspace/ui/lib/utils"
 
 export const Route = createFileRoute("/map")({ component: MapPage })
@@ -28,20 +29,22 @@ function MapPage() {
       />
 
       {/* Emergency Dispatch — top-right */}
-      <button className="absolute right-6 top-5 z-[500] flex items-center gap-2 rounded-lg bg-lihok-dark px-5 py-3 text-sm font-bold text-white shadow-xl transition-opacity hover:opacity-90">
+      <Button className="absolute right-6 top-5 z-[500] flex h-11 items-center gap-2 rounded-lg bg-lihok-dark px-5 py-3 text-sm font-bold text-white shadow-xl transition-opacity hover:bg-lihok-dark/90 hover:opacity-90">
         <Siren className="size-4" />
         Emergency Dispatch
-      </button>
+      </Button>
 
       {/* Map controls — bottom-left */}
       <div className="absolute bottom-24 left-6 z-[500] grid gap-2">
         {([Plus, Minus, LocateFixed, Layers] as const).map((Icon) => (
-          <button
+          <Button
             key={Icon.displayName ?? Icon.name}
-            className="grid size-10 place-items-center rounded-lg bg-card/90 shadow transition-colors hover:bg-card"
+            variant="secondary"
+            size="icon"
+            className="size-10 rounded-lg bg-card/90 shadow transition-colors hover:bg-card"
           >
             <Icon className="size-5 text-foreground" />
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -66,9 +69,9 @@ function MapPage() {
           ))}
         </div>
 
-        <button className="mt-6 w-full rounded-lg bg-card py-3 text-sm font-semibold shadow-sm transition-colors hover:bg-muted">
+        <Button variant="secondary" className="mt-6 w-full py-6 text-sm font-semibold shadow-sm transition-colors hover:bg-muted">
           Manage All Teams
-        </button>
+        </Button>
       </aside>
     </main>
   )
