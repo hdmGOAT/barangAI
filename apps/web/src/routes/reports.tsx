@@ -4,6 +4,7 @@ import { createFileRoute } from "@tanstack/react-router"
 
 import { categories, heatZones, responseTrend, stats } from "@/lib/mock-data"
 import { StatCard } from "@/components/stat-card"
+import { CategoryBar } from "@/components/category-bar"
 import { SectionCard } from "@/components/section-card"
 import { TimeRangeToggle, type TimeRange } from "@/components/time-range-toggle"
 import { HeatZoneCell } from "@/components/heat-zone-cell"
@@ -23,7 +24,7 @@ function Reports() {
 
   return (
     <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
-      <div className="mx-auto grid max-w-7xl gap-6">
+      <div className="grid w-full gap-6">
 
         {/* ── Page header + time range toggle ──────────────────────── */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -54,21 +55,18 @@ function Reports() {
         {/* ── SLA chart + Categories ────────────────────────────────── */}
         <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
           <SectionCard
-            title="Response Time SLA Trends"
+            title={<span className="text-lg font-bold">Response Time SLA Trends</span>}
             description="Real-time versus historical target of 5 minutes"
-            noPadding
           >
-            <div className="p-6">
-              <AreaChart
-                data={responseTrend}
-                index="time"
-                categories={["minutes", "target"]}
-                colors={["emerald", "red"]}
-                showLegend={false}
-                showYAxis={false}
-                className="h-72"
-              />
-            </div>
+            <AreaChart
+              data={responseTrend}
+              index="time"
+              categories={["minutes", "target"]}
+              colors={["emerald", "red"]}
+              showLegend={false}
+              showYAxis={false}
+              className="h-72 mt-2"
+            />
           </SectionCard>
 
           <SectionCard

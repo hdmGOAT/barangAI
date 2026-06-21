@@ -31,15 +31,21 @@ export function SectionCard({
       )}
     >
       {(title ?? action) && (
-        <CardHeader className="flex flex-row items-start justify-between gap-4 p-6 pb-0">
+        <div className={cn("flex flex-row items-start justify-between gap-4 p-6", noPadding ? "border-b border-border" : "pb-0")}>
           <div>
-            {title && <CardTitle className="text-base font-bold">{title}</CardTitle>}
+            {title && (
+              typeof title === "string" ? (
+                <h2 className="text-base font-bold">{title}</h2>
+              ) : (
+                title
+              )
+            )}
             {description && (
-              <p className="text-xs text-muted-foreground">{description}</p>
+              <p className="mt-1 text-xs text-muted-foreground">{description}</p>
             )}
           </div>
-          {action}
-        </CardHeader>
+          {action && <div>{action}</div>}
+        </div>
       )}
       <CardContent className={cn(noPadding ? "p-0" : "p-6", contentClassName)}>
         {children}

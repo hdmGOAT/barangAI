@@ -24,7 +24,7 @@ const icons: LucideIcon[] = [Clock, AlertTriangle, Activity, Radio]
 function Dashboard() {
   return (
     <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
-      <div className="mx-auto grid max-w-7xl gap-5">
+      <div className="grid w-full gap-5">
 
         {/* ── Stat cards ──────────────────────────────────────────── */}
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
@@ -45,33 +45,27 @@ function Dashboard() {
         {/* ── SLA chart + Categories ──────────────────────────────── */}
         <section className="grid gap-5 xl:grid-cols-[2fr_0.8fr]">
           <SectionCard
-            title="Response Time SLA Trends"
-            description="Real-time versus historical target of 5 minutes"
+            title={<span className="text-lg font-bold">Response Time SLA Trends</span>}
             action={<span className="text-xl leading-none text-muted-foreground">⋮</span>}
-            noPadding
-            className="md:col-span-2 lg:col-span-3"
           >
-            <div className="p-6">
-              {/* Note: Tremor chart requires its own padding container */}
-              <AreaChart
-                className="h-72"
-                data={responseTrend}
-                index="time"
-                categories={["minutes", "target"]}
-                colors={["emerald", "red"]}
-                valueFormatter={(number) => `${number}m`}
-                showLegend={false}
-                showYAxis={false}
-              />
-            </div>
+            {/* Note: Tremor chart requires its own padding container */}
+            <AreaChart
+              className="h-72 mt-2"
+              data={responseTrend}
+              index="time"
+              categories={["minutes", "target"]}
+              colors={["emerald", "red"]}
+              valueFormatter={(number) => `${number}m`}
+              showLegend={false}
+              showYAxis={false}
+            />
           </SectionCard>
 
           {/* Incident Categories */}
           <SectionCard
             title="Incident Category"
-            className="md:col-span-1 lg:col-span-1"
           >
-            <div className="grid gap-4">
+            <div className="grid gap-4 mt-2">
               {categories.map((category) => (
                 <CategoryBar
                   key={category.name}
@@ -81,7 +75,7 @@ function Dashboard() {
               ))}
             </div>
             <button className="mt-7 w-full rounded-lg bg-lihok-accent/30 py-3 text-xs font-bold text-lihok-ink transition-colors hover:bg-lihok-accent/50">
-              View All Categories
+              View Full Inventory
             </button>
           </SectionCard>
         </section>
@@ -89,7 +83,7 @@ function Dashboard() {
         {/* ── Recent Incidents + System Logs ──────────────────────── */}
         <section className="grid gap-5 xl:grid-cols-[2fr_0.8fr]">
           {/* Recent Incidents List */}
-          <SectionCard title="Recent Incident List" className="md:col-span-2">
+          <SectionCard title="Recent Incident List">
             <div className="grid divide-y divide-border">
               {recentIncidents.map((incident) => (
                 <IncidentRow
@@ -107,8 +101,6 @@ function Dashboard() {
           {/* System Logs */}
           <SectionCard
             title="System Logs"
-            variant="dashed"
-            className="md:col-span-1 lg:col-span-2"
           >
             <SystemLogFeed entries={logs} variant="dotted" />
           </SectionCard>

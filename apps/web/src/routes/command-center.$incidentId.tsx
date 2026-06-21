@@ -19,7 +19,7 @@ function CommandCenter() {
 
   return (
     <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
-      <div className="mx-auto grid max-w-7xl gap-6 xl:grid-cols-[1fr_340px]">
+      <div className="grid w-full gap-6 xl:grid-cols-[1fr_340px]">
 
         {/* ── Left: Incident Detail ────────────────────────────────── */}
         <SectionCard>
