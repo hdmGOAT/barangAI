@@ -32,6 +32,7 @@ function Dashboard() {
   const [categories, setCategories] = useState<Awaited<ReturnType<typeof getCategories>>>([])
   const [trend, setTrend] = useState<Awaited<ReturnType<typeof getResponseTrend>>>([])
   const [logs, setLogs] = useState<SystemLog[]>([])
+  const [logsUnavailable, setLogsUnavailable] = useState(false)
   const [loading, setLoading] = useState(true)
 
   const liveLogs = useRealtimeTable("system_logs", logs)
@@ -39,18 +40,16 @@ function Dashboard() {
   useEffect(() => {
     async function load() {
       try {
-        const [s, i, c, t, l] = await Promise.all([
+        const [s, i, c, t] = await Promise.all([
           getDashboardStats(),
           getRecentIncidents(5),
           getCategories(),
           getResponseTrend(),
-          getSystemLogs(5),
         ])
         setStats(s)
         setIncidents(i)
         setCategories(c)
         setTrend(t)
-        setLogs(l)
       } catch (err) {
         console.error("Dashboard load error:", err)
       } finally {
@@ -58,11 +57,22 @@ function Dashboard() {
       }
     }
     load()
+
+    getSystemLogs(5)
+      .then((data) => {
+        setLogs(data)
+        setLogsUnavailable(false)
+      })
+      .catch((err) => {
+        console.error("System logs unavailable:", err)
+        setLogs([])
+        setLogsUnavailable(true)
+      })
   }, [])
 
   if (loading) {
     return (
-      <main className="flex min-h-full items-center justify-center bg-lihok-surface p-4 text-lihok-ink">
+      <main className="flex min-h-full items-center justify-center bg-lihok-surface p-4 text-lihok-ink" data-testid="loading-state">
         <p className="text-sm text-muted-foreground">Loading dashboard...</p>
       </main>
     )
@@ -76,9 +86,9 @@ function Dashboard() {
   ].filter(Boolean)
 
   return (
-    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
+    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8" data-testid="dashboard-page">
       <div className="grid w-full gap-5">
-        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" data-testid="stats-section">
           {statArray.map((stat, index) => {
             const variant = statVariants[index] ?? "trend"
             return (
@@ -125,7 +135,7 @@ function Dashboard() {
           </SectionCard>
         </section>
         <section className="grid gap-5 xl:grid-cols-[2fr_0.8fr]">
-          <SectionCard title="Recent Incident List" action={<CardMenu />}>
+          <SectionCard title="Recent Incident List" action={<CardMenu />} data-testid="recent-incidents-section">
             <div className="grid divide-y divide-border">
               {incidents.map((incident) => (
                 <IncidentRow
@@ -139,11 +149,17 @@ function Dashboard() {
               ))}
             </div>
           </SectionCard>
-          <SectionCard title="System Logs" action={<CardMenu />}>
-            <SystemLogFeed
-              entries={liveLogs.map((l) => ({ message: l.message, timeAgo: formatTimeAgo(l.created_at) }))}
-              variant="dotted"
-            />
+          <SectionCard title="System Logs" action={<CardMenu />} data-testid="system-logs-section">
+            {logsUnavailable ? (
+              <p className="text-sm text-muted-foreground">System logs unavailable</p>
+            ) : liveLogs.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No recent alerts</p>
+            ) : (
+              <SystemLogFeed
+                entries={liveLogs.map((l) => ({ message: l.message, timeAgo: formatTimeAgo(l.created_at) }))}
+                variant="dotted"
+              />
+            )}
           </SectionCard>
         </section>
       </div>

@@ -16,6 +16,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IncidentsRouteImport } from './routes/incidents'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CommandCenterIndexRouteImport } from './routes/command-center.index'
 import { Route as CommandCenterIncidentIdRouteImport } from './routes/command-center.$incidentId'
 
 const SettingsRoute = SettingsRouteImport.update({
@@ -53,6 +54,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CommandCenterIndexRoute = CommandCenterIndexRouteImport.update({
+  id: '/command-center/',
+  path: '/command-center/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CommandCenterIncidentIdRoute = CommandCenterIncidentIdRouteImport.update({
   id: '/command-center/$incidentId',
   path: '/command-center/$incidentId',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/command-center/$incidentId': typeof CommandCenterIncidentIdRoute
+  '/command-center/': typeof CommandCenterIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/command-center/$incidentId': typeof CommandCenterIncidentIdRoute
+  '/command-center': typeof CommandCenterIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/reports': typeof ReportsRoute
   '/settings': typeof SettingsRoute
   '/command-center/$incidentId': typeof CommandCenterIncidentIdRoute
+  '/command-center/': typeof CommandCenterIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/command-center/$incidentId'
+    | '/command-center/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/command-center/$incidentId'
+    | '/command-center'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/reports'
     | '/settings'
     | '/command-center/$incidentId'
+    | '/command-center/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,6 +144,7 @@ export interface RootRouteChildren {
   ReportsRoute: typeof ReportsRoute
   SettingsRoute: typeof SettingsRoute
   CommandCenterIncidentIdRoute: typeof CommandCenterIncidentIdRoute
+  CommandCenterIndexRoute: typeof CommandCenterIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -185,6 +198,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/command-center/': {
+      id: '/command-center/'
+      path: '/command-center'
+      fullPath: '/command-center/'
+      preLoaderRoute: typeof CommandCenterIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/command-center/$incidentId': {
       id: '/command-center/$incidentId'
       path: '/command-center/$incidentId'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   ReportsRoute: ReportsRoute,
   SettingsRoute: SettingsRoute,
   CommandCenterIncidentIdRoute: CommandCenterIncidentIdRoute,
+  CommandCenterIndexRoute: CommandCenterIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

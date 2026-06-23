@@ -45,7 +45,7 @@ function Incidents() {
   )
 
   return (
-    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
+      <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8" data-testid="incidents-page">
       <div className="grid w-full gap-6">
         <PageHeader
           title="Incidents"
@@ -76,7 +76,7 @@ function Incidents() {
         {loading ? (
           <p className="text-sm text-muted-foreground">Loading incidents...</p>
         ) : visible.length > 0 ? (
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3" data-testid="incident-list">
             {visible.map((incident) => (
               <IncidentRow
                 key={incident.id}
@@ -90,7 +90,7 @@ function Incidents() {
             ))}
           </div>
         ) : (
-          <div className="grid place-items-center rounded-2xl border border-dashed border-border bg-card/70 px-6 py-16 text-center">
+          <div className="grid place-items-center rounded-2xl border border-dashed border-border bg-card/70 px-6 py-16 text-center" data-testid="incidents-empty-state">
             <p className="text-sm font-semibold text-foreground">No incidents found</p>
             <p className="mt-1 text-xs text-muted-foreground">
               {filter !== "all"

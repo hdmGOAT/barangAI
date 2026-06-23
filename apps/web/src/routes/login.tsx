@@ -10,6 +10,9 @@ import { Label } from "@workspace/ui/components/label"
 
 export const Route = createFileRoute("/login")({
   beforeLoad: async () => {
+    const { isMockAuth: checkMock } = await import("@/lib/auth")
+    if (checkMock()) throw redirect({ to: "/dashboard" })
+
     const { supabase } = await import("@/lib/supabase")
     const { data: { session } } = await supabase.auth.getSession()
     if (session) throw redirect({ to: "/dashboard" })
@@ -63,6 +66,7 @@ function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 autoFocus
+                data-testid="login-email-input"
               />
             </div>
             <div className="grid gap-2">
@@ -73,12 +77,13 @@ function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                data-testid="login-password-input"
               />
             </div>
             {error && (
-              <p className="text-xs font-semibold text-urgency-critical">{error}</p>
+              <p className="text-xs font-semibold text-urgency-critical" data-testid="login-error-message">{error}</p>
             )}
-            <Button type="submit" className="w-full font-bold" disabled={loading}>
+            <Button type="submit" className="w-full font-bold" disabled={loading} data-testid="login-submit-button">
               {loading ? "Signing in..." : "Sign In"}
             </Button>
           </form>

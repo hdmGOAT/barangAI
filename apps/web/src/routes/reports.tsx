@@ -69,7 +69,7 @@ function Reports() {
   ].filter(Boolean)
 
   return (
-    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
+    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8" data-testid="reports-page">
       <div className="grid w-full gap-6">
         <PageHeader
           title="Analytics Performance"

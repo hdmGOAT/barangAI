@@ -61,6 +61,18 @@ function IncidentError({ message }: { message: string }) {
   )
 }
 
+function getIncidentErrorKind(err: unknown): string {
+  if (err instanceof Error) {
+    const m = err.message
+    if (m.includes("PGRST205") || m.includes("Could not find the table")) return "SCHEMA_MISMATCH"
+    if (m.includes("42501") || m.includes("permission denied") || m.includes("violates row-level security")) return "PERMISSION_DENIED"
+    if (m.includes("PGRST116")) return "NOT_FOUND"
+    if (m.includes("Failed to fetch") || m.includes("NetworkError") || m.includes("network")) return "NETWORK_ERROR"
+    return m
+  }
+  return "Failed to load incident"
+}
+
 function CommandCenter() {
   const { incidentId } = Route.useParams()
   const [incident, setIncident] = useState<any>(null)
@@ -68,6 +80,7 @@ function CommandCenter() {
   const [systemLogs, setSystemLogs] = useState<SystemLog[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [logsUnavailable, setLogsUnavailable] = useState(false)
 
   const liveSms = useRealtimeTable("sms_reports", smsReports)
   const liveLogs = useRealtimeTable("system_logs", systemLogs)
@@ -75,10 +88,9 @@ function CommandCenter() {
   useEffect(() => {
     async function load() {
       try {
-        const [inc, sms, logs] = await Promise.all([
+        const [inc, sms] = await Promise.all([
           getIncidentById(incidentId),
           getSmsReportsByIncident(incidentId),
-          getSystemLogsByIncident(incidentId),
         ])
         if (!inc) {
           setError("NOT_FOUND")
@@ -86,20 +98,40 @@ function CommandCenter() {
         }
         setIncident(inc)
         setSmsReports(sms)
-        setSystemLogs(logs)
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load incident")
+        setError(getIncidentErrorKind(err))
+        return
       } finally {
         setLoading(false)
       }
+
+      getSystemLogsByIncident(incidentId)
+        .then((data) => {
+          setSystemLogs(data)
+          setLogsUnavailable(false)
+        })
+        .catch((err) => {
+          console.error("Incident logs unavailable:", err)
+          setSystemLogs([])
+          setLogsUnavailable(true)
+        })
     }
     load()
   }, [incidentId])
 
-  if (loading) return <IncidentDetailLoading />
-  if (error === "NOT_FOUND") return <IncidentNotFound id={incidentId} />
-  if (error) return <IncidentError message={error} />
-  if (!incident) return <IncidentNotFound id={incidentId} />
+  if (loading) return <div data-testid="loading-state"><IncidentDetailLoading /></div>
+  if (error === "NOT_FOUND") return <div data-testid="error-state"><IncidentNotFound id={incidentId} /></div>
+  if (error === "SCHEMA_MISMATCH") {
+    return <div data-testid="error-state"><IncidentError message="Some data sources are unavailable. The incident may still load once the required tables are set up." /></div>
+  }
+  if (error === "PERMISSION_DENIED") {
+    return <div data-testid="error-state"><IncidentError message="Access denied. Your session may not have permission to view this incident." /></div>
+  }
+  if (error === "NETWORK_ERROR") {
+    return <div data-testid="error-state"><IncidentError message="Unable to connect to the backend. Please check your network connection." /></div>
+  }
+  if (error) return <div data-testid="error-state"><IncidentError message={error} /></div>
+  if (!incident) return <div data-testid="error-state"><IncidentNotFound id={incidentId} /></div>
 
   const smsEntries: SmsEntry[] = liveSms.map((s) => ({
     timestamp: formatTimeAgo(s.created_at),
@@ -114,7 +146,7 @@ function CommandCenter() {
   }))
 
   return (
-    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
+    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8" data-testid="command-center-page">
       <div className="grid w-full min-w-0 gap-6 xl:grid-cols-[minmax(0,1fr)_340px]">
         <SectionCard>
           <div className="border-t-4 border-primary pt-6">
@@ -144,7 +176,7 @@ function CommandCenter() {
             </div>
           </div>
           <div className="mt-5 flex justify-end gap-3 border-b border-border pb-5">
-            <Button variant="emergency" className="flex h-11 items-center gap-2 px-5 text-sm font-bold transition-opacity hover:opacity-90">
+            <Button variant="emergency" className="flex h-11 items-center gap-2 px-5 text-sm font-bold transition-opacity hover:opacity-90" data-testid="dispatch-button">
               <Send className="size-4" />Dispatch Response Team
             </Button>
             <Button variant="outline" size="icon" className="size-11 border-border transition-colors hover:bg-muted">
@@ -160,7 +192,13 @@ function CommandCenter() {
           <AiUrgencyPanel score={98} reasoning="Report volume, keyword analysis, and nearby historical flood data indicate immediate intervention." />
           <BroadcastForm incidentId={incidentId} defaultMessage={`Alert: ${incident.title}`} onSend={async (msg) => { console.log("Sending broadcast:", msg); await new Promise((resolve) => setTimeout(resolve, 1000)); }} />
           <SectionCard title={<span className="text-xs font-black uppercase tracking-wide text-muted-foreground">System Log</span>} variant="dashed">
-            <SystemLogFeed entries={logEntries} variant="plain" />
+            {logsUnavailable ? (
+              <p className="text-sm text-muted-foreground">Logs unavailable</p>
+            ) : logEntries.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No recent alerts</p>
+            ) : (
+              <SystemLogFeed entries={logEntries} variant="plain" />
+            )}
           </SectionCard>
         </aside>
       </div>

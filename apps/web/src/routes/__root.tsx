@@ -3,12 +3,13 @@ import { HeadContent, Outlet, Scripts, createRootRoute, redirect, useRouterState
 import appCss from "@workspace/ui/globals.css?url"
 import { AppShell } from "@/components/app-shell"
 import { TooltipProvider } from "@workspace/ui/components/tooltip"
-import { AuthProvider } from "@/lib/auth"
+import { AuthProvider, isMockAuth } from "@/lib/auth"
 import { supabase } from "@/lib/supabase"
 
 export const Route = createRootRoute({
   beforeLoad: async ({ location }) => {
     if (location.pathname === "/login") return
+    if (isMockAuth()) return
 
     const { data: { session } } = await supabase.auth.getSession()
     if (!session) throw redirect({ to: "/login" })

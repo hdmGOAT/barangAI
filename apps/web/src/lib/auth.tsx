@@ -3,6 +3,19 @@ import type { ReactNode } from "react"
 import { supabase } from "@/lib/supabase"
 import type { Profile, AuthState } from "@/lib/types"
 
+const MOCK_USER: Profile = {
+  id: "00000000-0000-0000-0000-000000000000",
+  full_name: "Juan Dela Cruz",
+  role: "Brgy. Captain",
+  avatar_url: null,
+  barangay_id: null,
+  created_at: new Date().toISOString(),
+}
+
+function isMockAuth(): boolean {
+  return import.meta.env.VITE_ENABLE_MOCK_AUTH === "true"
+}
+
 interface AuthContextValue extends AuthState {
   signIn: (email: string, password: string) => Promise<{ error: string | null }>
   signOut: () => Promise<void>
@@ -11,10 +24,11 @@ interface AuthContextValue extends AuthState {
 const AuthContext = createContext<AuthContextValue | null>(null)
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<AuthState>({
-    user: null,
-    session: null,
-    isLoading: true,
+  const [state, setState] = useState<AuthState>(() => {
+    if (isMockAuth()) {
+      return { user: MOCK_USER, session: null, isLoading: false }
+    }
+    return { user: null, session: null, isLoading: true }
   })
 
   const fetchProfile = useCallback(async (userId: string): Promise<Profile | null> => {
@@ -27,6 +41,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [])
 
   useEffect(() => {
+    if (isMockAuth()) return
+
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session?.user) {
         const profile = await fetchProfile(session.user.id)
@@ -51,11 +67,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [fetchProfile])
 
   const signIn = useCallback(async (email: string, password: string) => {
+    if (isMockAuth()) {
+      setState({ user: MOCK_USER, session: null, isLoading: false })
+      return { error: null }
+    }
     const { error } = await supabase.auth.signInWithPassword({ email, password })
     return { error: error?.message ?? null }
   }, [])
 
   const signOut = useCallback(async () => {
+    if (isMockAuth()) {
+      setState({ user: null, session: null, isLoading: false })
+      return
+    }
     await supabase.auth.signOut()
   }, [])
 
@@ -71,3 +95,5 @@ export function useAuth(): AuthContextValue {
   if (!ctx) throw new Error("useAuth must be used within an AuthProvider")
   return ctx
 }
+
+export { isMockAuth, MOCK_USER }

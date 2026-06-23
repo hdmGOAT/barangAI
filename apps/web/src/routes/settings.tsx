@@ -30,10 +30,10 @@ function Settings() {
     : session?.user.email?.[0]?.toUpperCase() ?? "U"
 
   return (
-    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8">
+    <main className="min-h-full bg-lihok-surface p-4 text-lihok-ink lg:p-8" data-testid="settings-page">
       <div className="grid w-full max-w-3xl gap-6">
         <PageHeader title="Settings" description="Manage your profile, notifications, and system configuration." />
-        <SectionCard title="Profile" description="Your account identity in the console.">
+        <SectionCard title="Profile" description="Your account identity in the console." data-testid="profile-section">
           <div className="flex items-center gap-4">
             <Avatar className="size-12">
               <AvatarFallback className="bg-lihok-accent text-sm font-bold text-lihok-ink">{initials}</AvatarFallback>

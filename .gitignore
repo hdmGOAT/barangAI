@@ -5,6 +5,7 @@ dist-ssr
 *.local
 .env*
 !.env.example
+!.env.test.example
 .tanstack
 .wrangler
 .output
@@ -21,3 +22,10 @@ todos.json
 # supabase
 supabase/.temp/
 .vibecode-backup*/
+
+apps/web/e2e/.auth/
+apps/web/e2e/test-results/
+apps/web/e2e/playwright-report/
+apps/web/e2e
+apps/web/test-results
+apps/web/playwright-report
