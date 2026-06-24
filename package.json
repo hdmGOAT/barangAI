@@ -8,6 +8,7 @@
     "lint": "turbo lint",
     "format": "turbo format",
     "typecheck": "turbo typecheck",
+    "test:e2e:web": "pnpm --filter web test:e2e",
     "sb": "supabase",
     "sb:link": "export $(grep -v '^#' supabase/functions/.env | grep -E 'SUPABASE_ACCESS_TOKEN|SUPABASE_PROJECT_REF' | xargs) && supabase link --project-ref \"$SUPABASE_PROJECT_REF\" || true",
     "sb:push": "export $(grep -v '^#' supabase/functions/.env | grep SUPABASE_ACCESS_TOKEN | xargs) && supabase db push || true",

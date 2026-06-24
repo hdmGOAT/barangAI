@@ -2,8 +2,6 @@ import { useEffect, useState } from "react"
 import "leaflet/dist/leaflet.css"
 import type * as Leaflet from "leaflet"
 
-import { mapIncidents } from "@/lib/mock-data"
-
 type LeafletModules = {
   MapContainer: React.ComponentType<Record<string, unknown>>
   TileLayer: React.ComponentType<Record<string, unknown>>
@@ -12,7 +10,6 @@ type LeafletModules = {
   divIcon: typeof Leaflet.divIcon
 }
 
-/** Marker HTML — uses the CSS variable so theming is consistent */
 const MARKER_HTML = `
   <span style="
     display:block;
@@ -24,7 +21,11 @@ const MARKER_HTML = `
   "></span>
 `
 
-export function LeafletMap() {
+export interface LeafletMapProps {
+  incidents?: { id: string; title: string; position: [number, number]; urgency: string }[]
+}
+
+export function LeafletMap({ incidents = [] }: LeafletMapProps) {
   const [modules, setModules] = useState<LeafletModules | null>(null)
 
   useEffect(() => {
@@ -48,7 +49,6 @@ export function LeafletMap() {
     }
   }, [])
 
-  /* Loading skeleton — uses Tailwind token class, no hardcoded gradient */
   if (!modules) {
     return <div className="h-full w-full bg-lihok-ink" />
   }
@@ -67,7 +67,7 @@ export function LeafletMap() {
         url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
         attribution="&copy; OpenStreetMap &copy; CARTO"
       />
-      {mapIncidents.map((incident) => (
+      {incidents.map((incident) => (
         <Marker key={incident.id} position={incident.position} icon={markerIcon}>
           <Popup>{incident.title}</Popup>
         </Marker>
