@@ -360,7 +360,7 @@ function CommandCenter() {
               {incident.status === "resolved" ? "Resolved" : "Mark as Resolved"}
             </Button>
           </SectionCard>
-          <BroadcastForm incidentId={incidentId} defaultMessage={`Alert: ${incident.title}`} onSend={async (msg) => { 
+          <BroadcastForm incidentId={incidentId} defaultMessage={`Alert: ${incident.title}`} disabled={incident.status === "resolved"} onSend={async (msg) => {
             try {
               const res = await sendBroadcast(incidentId, msg)
               alert(`Broadcast sent to ${res.count} citizen(s).`)

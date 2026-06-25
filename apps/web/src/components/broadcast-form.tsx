@@ -10,6 +10,7 @@ export interface BroadcastFormProps {
   defaultMessage?: string
   onSend?: (message: string) => Promise<void>
   className?: string
+  disabled?: boolean
 }
 
 export function BroadcastForm({
@@ -17,6 +18,7 @@ export function BroadcastForm({
   defaultMessage = "",
   onSend,
   className,
+  disabled = false,
 }: BroadcastFormProps) {
   const [message, setMessage] = useState(defaultMessage)
   const [sending, setSending] = useState(false)
@@ -56,13 +58,14 @@ export function BroadcastForm({
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           placeholder="Type your alert message..."
+          disabled={disabled}
         />
         <Button
           className="mt-4 w-full bg-lihok-accent py-6 font-black text-lihok-ink hover:bg-lihok-accent/90"
-          disabled={sending || !message.trim()}
+          disabled={disabled || sending || !message.trim()}
           onClick={handleSend}
         >
-          {sending ? "Sending..." : "Send Alert"}
+          {disabled ? "Incident Resolved" : sending ? "Sending..." : "Send Alert"}
         </Button>
       </div>
     </SectionCard>
