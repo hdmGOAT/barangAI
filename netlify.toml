@@ -1,5 +1,5 @@
 [build]
-  command = "pnpm install --frozen-lockfile && pnpm --filter web build"
+  command = "pnpm install --frozen-lockfile && pnpm --filter web build && cp -r apps/web/.netlify ."
   publish = "apps/web/dist/client"
 
 [build.environment]
